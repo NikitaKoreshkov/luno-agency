@@ -1,0 +1,16 @@
+{
+  "name": "tsl_elastic_vertex_destruction",
+  "version": "1.0.0",
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "three": "^0.177.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}

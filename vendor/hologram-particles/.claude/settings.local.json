@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(kill:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e:*)",
+      "Bash(pnpm add:*)",
+      "Bash(curl:*)",
+      "Bash(pnpm list:*)",
+      "Bash(npx next build:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm dev:*)",
+      "Read(//tmp/**)",
+      "Bash(mkdir -p components/Footer)",
+      "Bash(mkdir -p components/ModelSelector)",
+      "Bash(mkdir -p components/OverlayButtons)",
+      "Bash(mkdir -p components/OverlayHeader)",
+      "Bash(mkdir -p components/UIOverlay)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npx eslint *)"
+    ]
+  }
+}

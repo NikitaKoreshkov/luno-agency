@@ -1,0 +1,179 @@
+/*
+ * Liquid glass surface.
+ *
+ * Layer order (bottom → top):
+ *   1. .backdrop  — the refracted/blurred backdrop (backdrop-filter)
+ *   2. .tint      — flat translucent fill so text stays legible
+ *   3. .rim       — inset highlight + shadow that reads as glass thickness
+ *   4. children   — real content, never filtered
+ *
+ * The filter lives on a dedicated, never-transformed layer. Animating a
+ * transform on an element that also carries backdrop-filter forces the
+ * compositor to re-snapshot the backdrop every frame, which is the single most
+ * expensive thing you can do with this effect.
+ *
+ * Fading the surface in/out goes through `--lg-surface-opacity`, never through
+ * `opacity` on this root or on any ancestor. Per Filter Effects 2, an ancestor
+ * with `opacity < 1` — or merely `will-change: opacity` — becomes a Backdrop
+ * Root, and `backdrop-filter` then samples only the (empty) area between that
+ * ancestor and the layer, so the material silently disappears. Fading each
+ * layer individually keeps every one of them a sibling, so the backdrop stays
+ * reachable for the whole animation.
+ */
+
+.root {
+  position: relative;
+  isolation: isolate;
+  /* Clip rim/border to the plate radius — without this a square .rim paints
+     hard top/bottom hairlines past the rounded corners on every panel. */
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.filterHost {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.backdrop {
+  composes: layer;
+  /* Set imperatively: the property name differs per engine and the value
+     embeds a generated filter id. */
+  z-index: 0;
+  /* Fading the filtered layer cross-dissolves it with the untouched backdrop,
+     which is how a control lifts into glass instead of stacking materials.
+     `--lg-surface-opacity` rides on top of it for entrance/exit. */
+  opacity: calc(var(--lg-lens-opacity, 1) * var(--lg-surface-opacity, 1));
+  transition: opacity var(--glass-dur-lens, 0.2s) var(--glass-ease, ease);
+}
+
+/*
+ * Content refraction, in two layers.
+ *
+ * `refractClip` bounds the result to the glass: a filter paints anywhere its
+ * region allows, so displaced pixels escape the filtered element and land beside
+ * it as a duplicate of the fill. `refract` owns the filter and clips the
+ * oversized copy inside it, which keeps the map aligned with the lens box.
+ */
+.refractClip {
+  composes: layer;
+  z-index: 0;
+  overflow: hidden;
+  opacity: calc(var(--lg-lens-opacity, 1) * var(--lg-surface-opacity, 1));
+  transition: opacity var(--glass-dur-lens, 0.2s) var(--glass-ease, ease);
+}
+
+.refract {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.tint {
+  composes: layer;
+  z-index: 1;
+  opacity: var(--lg-surface-opacity, 1);
+  background: var(--lg-tint, rgba(255, 255, 255, 0.08));
+  transition: background var(--glass-dur-morph, 0.34s) var(--glass-ease, ease);
+}
+
+/*
+ * Clear variant: barely tinted, so it needs its own dimming pass to keep
+ * anything sitting on it legible over photos and video.
+ */
+.clear .tint {
+  background: var(--lg-tint, var(--glass-fill-clear, rgba(0, 0, 0, 0.03)));
+}
+
+/* Illumination from within, anchored under the pointer. */
+.glow {
+  composes: layer;
+  z-index: 2;
+  opacity: calc(var(--lg-glow-opacity, 0) * var(--lg-surface-opacity, 1));
+  background: radial-gradient(
+    var(--glass-glow-size, 62%) var(--glass-glow-size, 62%) at
+      var(--lg-glow-x, 50%) var(--lg-glow-y, 50%),
+    var(--glass-glow, rgba(255, 255, 255, 0.22)),
+    transparent 72%
+  );
+  transition: opacity var(--glass-dur-release, 0.42s) var(--glass-ease, ease);
+}
+
+.rim {
+  composes: layer;
+  z-index: 2;
+  /* `--lg-rim-fade` (default 1) lets popovers square the lip so the bright
+     top edge dies with the fill instead of hanging as a second thin plate. */
+  opacity: calc(var(--lg-surface-opacity, 1) * var(--lg-rim-fade, 1));
+  /* Explicit — don't rely on `composes` alone for the radius clip. */
+  border-radius: inherit;
+  overflow: hidden;
+  /* Soft lip only. A 1px solid border + hard inset 1px shadows read as
+     ruler lines across the top/bottom of every glass plate. */
+  border: none;
+  box-shadow:
+    inset 0 0.5px 0.5px rgb(255 255 255 / var(--lg-inset-hi, 0.28)),
+    inset 0 -0.5px 0.5px rgb(0 0 0 / var(--lg-inset-lo, 0.16)),
+    inset 0 0 14px rgb(255 255 255 / var(--lg-sheen, 0.06));
+}
+
+:global(html[data-app-theme="light"]) .rim {
+  box-shadow:
+    inset 0 0.5px 0.5px rgb(255 255 255 / var(--lg-inset-hi, 0.42)),
+    inset 0 -0.5px 0.5px rgb(255 255 255 / 0.32),
+    inset 0 0 14px rgb(255 255 255 / var(--lg-sheen, 0.1)),
+    inset 0 0 0 1px var(--lg-rim, var(--glass-rim));
+}
+
+/* Sticky lab bars: keep inset / sheen on the long edges only. */
+.rimY {
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    inset 0 0.5px 0.5px rgb(255 255 255 / var(--lg-inset-hi, 0.28)),
+    inset 0 -0.5px 0.5px rgb(0 0 0 / var(--lg-inset-lo, 0.16)),
+    inset 0 16px 14px -14px rgb(255 255 255 / var(--lg-sheen, 0.08)),
+    inset 0 -16px 14px -14px rgb(255 255 255 / var(--lg-sheen, 0.08));
+}
+
+:global(html[data-app-theme="light"]) .rimY {
+  box-shadow:
+    inset 0 0.5px 0.5px rgb(255 255 255 / var(--lg-inset-hi, 0.42)),
+    inset 0 -0.5px 0.5px rgb(255 255 255 / 0.32),
+    inset 0 0 0 1px var(--lg-rim, var(--glass-rim));
+}
+
+.content {
+  position: relative;
+  z-index: 3;
+  border-radius: inherit;
+}
+
+/*
+ * Reduced motion / low tier / pre-bake: no displacement, no specular, just
+ * frost. Radius comes from `--perf-glass-blur` on <html> (SSR medium, then
+ * the classified budget) — never from a React inline px, or hydration
+ * mismatches 14 vs 22.
+ */
+.flat .backdrop {
+  backdrop-filter: blur(var(--perf-glass-blur, 14px)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--perf-glass-blur, 14px)) saturate(140%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none !important;
+  }
+}
