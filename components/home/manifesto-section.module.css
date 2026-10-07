@@ -1,0 +1,73 @@
+.section {
+  position: relative;
+  padding: clamp(150px, 24vh, 240px) 32px;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+/* ── Big statement (Codrops .blur-text, our tokens) ─────────── */
+.statement {
+  margin: 0;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.4rem, 6.5vw, 6rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--color-fg);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.line {
+  display: block;
+}
+
+/* ── Sub-line (second, cheaper treatment of the same family) ── */
+.subline {
+  margin: clamp(28px, 4vh, 44px) auto 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 1.45vw, 1.3rem);
+  font-weight: 450;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--color-muted);
+  text-align: center;
+  max-width: 62ch;
+}
+
+/* ── Split units (mirrors SplitType's inline-block words/chars) ── */
+.word {
+  display: inline-block;
+}
+
+.char {
+  display: inline-block;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 96px 16px;
+  }
+}
+
+/* Static fallback: no JS / reduced motion — the sentence is simply visible. */
+@media (prefers-reduced-motion: reduce) {
+  .word,
+  .char {
+    filter: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    will-change: auto !important;
+  }
+}
+
+html[data-perf-motion="reduced"] .word,
+html[data-perf-motion="reduced"] .char {
+  will-change: auto;
+}

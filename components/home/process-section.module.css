@@ -1,0 +1,533 @@
+/* ── Shell (LUNO conventions) ─────────────────────────────── */
+.section {
+  position: relative;
+  padding: 140px 32px 104px;
+  /* Акцент блока = палитра кнопки «Обсудить проект» (--btn-solid-bg в
+     globals.css), а не общий --color-success: зелёный меняем только здесь,
+     чтобы не трогать его на всём сайте. */
+  --proc-accent: #dfeef7;
+}
+
+.inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  margin-bottom: 72px;
+}
+
+.label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── Progress rail (1px) ──────────────────────────────────── */
+.rail {
+  position: relative;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 96px;
+}
+
+.railFill {
+  height: 1px;
+  background: var(--proc-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.railFill[data-live="1"] {
+  will-change: transform;
+}
+
+/* Подсказки слоя нужны только пока секция в кадре (data-vis ставит IO). */
+.section[data-vis="0"] .railFill[data-live="1"],
+.section[data-vis="0"] .plate[data-live="1"],
+.section[data-vis="0"] .plate[data-live="1"] .plateVeil {
+  will-change: auto;
+}
+
+/* Пипсы шагов на рельсе: по центрам посадки пластины. Таймлайн Flip-а —
+   5.5с (4 посадок по 1с с шагом '+=' 0.5), середина каждой посадки:
+   0.5/5.5, 2/5.5, 3.5/5.5, 5/5.5 ⇒ 9% / 36% / 64% / 91%. */
+.railPip {
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  transform: translate(-50%, -50%);
+  transition:
+    background-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.railPip[data-pip="1"] { left: 9%; }
+.railPip[data-pip="2"] { left: 36%; }
+.railPip[data-pip="3"] { left: 64%; }
+.railPip[data-pip="4"] { left: 91%; }
+
+.railPip[data-on="1"] {
+  background: var(--proc-accent);
+  box-shadow: 0 0 10px var(--proc-accent);
+}
+
+/* ── Stage + plate (the "one element") ────────────────────── */
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 480px;
+  margin-bottom: 40px;
+}
+
+.plate {
+  position: relative;
+  /* Под текстом шагов: в полёте между слотами пластина проходит за копирайтом,
+     и заголовок всегда остаётся читаемым. */
+  z-index: 2;
+  width: 360px;
+  height: 450px;
+  overflow: hidden;
+}
+
+/* Пластина — фото-карточка, поэтому стекло под ней не нужно: backdrop-семплинг
+   фона под moving-элементом трансформом — самый дорогой кадр на scroll.
+   Заливка остаётся подложкой на время загрузки кадра, обводку (.luno-panel
+   ::after) не трогаем. Спецификатор .section нужен, чтобы перебить .luno-panel. */
+.section .plate {
+  background: rgba(8, 8, 10, 0.74);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* will-change только пока живой Flip-таймлайн (data-live ставит JS).
+   width/height в подсказке не нужны: Flip.fit двигает пластину трансформом. */
+.plate[data-live="1"] {
+  will-change: transform;
+}
+
+.plateFace {
+  position: absolute;
+  inset: 0;
+}
+
+/* Вход секции из 80% яркости: opacity на отдельном слое вместо filter.
+   Слой поднимаем только пока живёт таймлайн (data-live ставит build()). */
+.plateVeil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.plate[data-live="1"] .plateVeil {
+  will-change: opacity;
+}
+
+.plateBrand,
+.plateStep {
+  position: absolute;
+  inset: 0;
+}
+
+.platePhoto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Скрытая поза шагов живёт в CSS, а не только в gsap.fromTo: до сборки сцены
+   (SSR и «pending») пластина обязана показывать обложку-логотип, а не последнее
+   фото, которое лежит выше остальных в порядке DOM. */
+.plateStep .platePhoto {
+  clip-path: inset(0 0 100% 0);
+}
+.plateStep .plateCaption {
+  opacity: 0;
+}
+
+/* Подпись читается на любом кадре: плоская затемнённая подложка вместо
+   стекла, sampling фона под морфящейся пластиной не нужен. */
+.plateCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 46px 24px 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0) 0%,
+    rgba(8, 8, 10, 0.62) 46%,
+    rgba(8, 8, 10, 0.9) 100%
+  );
+}
+
+.plateTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plateBrandDots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.plateBrandDots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.plateBrandDots i:first-child {
+  background: var(--proc-accent);
+}
+
+.plateStepNum {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.plateStepMeta {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--proc-accent);
+  white-space: nowrap;
+}
+
+.plateStepDeliver {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ── Steps: слот + текст ──────────────────────────────────── */
+.step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 64px;
+  margin-bottom: 128px;
+}
+
+.step:last-child {
+  margin-bottom: 8px;
+}
+
+.stepSlot {
+  justify-self: center;
+  align-self: center;
+  position: relative;
+  z-index: 1;
+  border-radius: var(--glass-radius-panel);
+  /* Слот — невидимая мишень для Flip.fit; пластина накрывает его точно. */
+  background: transparent;
+}
+
+.stepBody {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 520px;
+}
+
+/* Чёт/нечёт: слот то слева, то справа — пластине есть куда морфить. */
+.step[data-slot="2"] .stepSlot,
+.step[data-slot="4"] .stepSlot {
+  order: 2;
+}
+
+.step[data-slot="2"] .stepBody,
+.step[data-slot="4"] .stepBody {
+  order: 1;
+  justify-self: end;
+}
+
+.step[data-slot="1"] .stepSlot {
+  width: 360px;
+  height: 460px;
+}
+
+.step[data-slot="2"] .stepSlot {
+  width: 480px;
+  height: 320px;
+}
+
+.step[data-slot="3"] .stepSlot {
+  width: 340px;
+  height: 520px;
+}
+
+.step[data-slot="4"] .stepSlot {
+  width: 520px;
+  height: 380px;
+}
+
+.stepNum {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--proc-accent);
+}
+
+.stepTitle {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Копия шага длинная (2 предложения), поэтому вести её узкой колонкой:
+   ~46 знаков на строку читаются без «уезжающего» взгляда. */
+.stepDesc {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.72;
+  color: var(--color-muted);
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* ── Появление текста шага ────────────────────────────────── */
+/* Флаг data-on ставит IntersectionObserver, дальше только CSS: GSAP-таймлайн
+   появления откатывает ctx.revert() на resize, и шаг залипает невидимым.
+   Скрытая поза — исключительно в motion-режиме, чтобы SSR и static-fallback
+   отдавали текст целиком. */
+[data-scene="motion"] .stepBody > * {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 0.7s ease,
+    transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+[data-scene="motion"] .step[data-on="1"] .stepBody > * {
+  opacity: 1;
+  transform: none;
+}
+
+[data-scene="motion"] .step[data-on="1"] .stepTitle {
+  transition-delay: 0.08s;
+}
+
+[data-scene="motion"] .step[data-on="1"] .stepDesc {
+  transition-delay: 0.16s;
+}
+
+/* ── Static fallback (PERF GATE) ──────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.listPlate {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  height: 120px;
+}
+
+.listBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .step {
+    gap: 40px;
+    margin-bottom: 120px;
+  }
+
+  .step[data-slot="2"] .stepSlot,
+  .step[data-slot="4"] .stepSlot {
+    order: 0;
+  }
+
+  .step[data-slot="2"] .stepBody,
+  .step[data-slot="4"] .stepBody {
+    order: 1;
+    justify-self: start;
+  }
+
+  .step[data-slot="1"] .stepSlot {
+    width: 300px;
+    height: 380px;
+  }
+
+  .step[data-slot="2"] .stepSlot {
+    width: 380px;
+    height: 260px;
+  }
+
+  .step[data-slot="3"] .stepSlot {
+    width: 280px;
+    height: 420px;
+  }
+
+  .step[data-slot="4"] .stepSlot {
+    width: 400px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 860px) {
+  .section {
+    padding: 88px 16px;
+  }
+
+  .header {
+    margin-bottom: 48px;
+  }
+
+  .heading {
+    font-size: clamp(1.4rem, 6.4vw, 1.9rem);
+  }
+
+  .rail {
+    margin-bottom: 56px;
+  }
+
+  .stage {
+    height: 420px;
+    margin-bottom: 32px;
+  }
+
+  .plate {
+    width: 280px;
+    height: 340px;
+  }
+
+  /* На 280×340 и на низких слотах (320×220) подпись не должна съедать кадр. */
+  .plateCaption {
+    gap: 8px;
+    padding: 34px 16px 16px;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 8, 10, 0) 0%,
+      rgba(8, 8, 10, 0.7) 40%,
+      rgba(8, 8, 10, 0.94) 100%
+    );
+  }
+
+  .plateStepNum {
+    font-size: 28px;
+  }
+
+  .plateStepDeliver {
+    font-size: 11px;
+  }
+
+  .step {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 28px;
+    margin-bottom: 110px;
+  }
+
+  .stepBody {
+    order: 1 !important;
+    justify-self: center;
+    align-items: center;
+  }
+
+  .step .stepSlot {
+    order: 0;
+  }
+
+  .step[data-slot="1"] .stepSlot {
+    width: min(280px, 78vw);
+    height: 320px;
+  }
+
+  .step[data-slot="2"] .stepSlot {
+    width: min(320px, 84vw);
+    height: 220px;
+  }
+
+  .step[data-slot="3"] .stepSlot {
+    width: min(260px, 74vw);
+    height: 360px;
+  }
+
+  .step[data-slot="4"] .stepSlot {
+    width: min(340px, 88vw);
+    height: 250px;
+  }
+
+  .stepDesc {
+    max-width: 42ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .railFill {
+    transition: none;
+  }
+}

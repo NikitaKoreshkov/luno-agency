@@ -1,0 +1,57 @@
+.shell {
+  --panel-radius: var(--glass-radius-panel);
+  position: relative;
+  height: 100%;
+  border-radius: var(--panel-radius);
+  isolation: isolate;
+  overflow: hidden;
+  background: #08080a;
+  box-shadow: var(--glass-panel-chrome);
+  transform-origin: center center;
+}
+
+/* Слой профилирован только пока панель реально анимируется:
+   постоянный will-change на 22 панелях = 22 композитных слоя. */
+.shell[data-mag="on"] {
+  will-change: transform;
+}
+
+@media (pointer: coarse) {
+  .shell {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+.shellStatic {
+  transform: none !important;
+  will-change: auto;
+}
+
+.rim {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--rim-bg, var(--glass-panel-rim));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  transition: background 0.12s ease-out;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background: #08080a;
+}

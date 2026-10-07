@@ -1,0 +1,97 @@
+.stage {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  max-width: 100%;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  background: transparent;
+}
+
+.stage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 160px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.08) 28%,
+    rgba(0, 0, 0, 0.42) 62%,
+    rgba(0, 0, 0, 0.88) 86%,
+    #000 100%
+  );
+}
+
+.stageCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stage.live .stageCanvas {
+  opacity: 1;
+}
+
+.logoHost {
+  position: relative;
+  z-index: 1;
+  width: 86%;
+  margin: -72px auto 40px;
+  padding: 0;
+  pointer-events: auto;
+  cursor: default;
+  /* Перемешивание поля читается на capture-фазе по всему стадийному блоку,
+     поэтому захват указателя здесь не нужен и скролл страницы не перехватывается. */
+  touch-action: pan-y pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.markBase {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: #b7c6d6;
+  opacity: 1;
+  transform: scale(0.98);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * Метка — это подложка, а не второй слой: поле частиц легло поверх неё, и
+ * подложка уходит, только когда сцена реально ожила. Без WebGL2, при
+ * prefers-reduced-motion и после потери GL-контекста `.live` снимается, и внизу
+ * страницы остаётся читаемый логотип вместо пустого блока.
+ */
+.stage.live .markBase {
+  opacity: 0;
+  transform: scale(1);
+}
+
+@media (max-width: 640px) {
+  .logoHost {
+    width: 90%;
+    margin: -40px auto 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markBase,
+  .stageCanvas,
+  .stage.live .markBase,
+  .stage.live .stageCanvas {
+    transition: none;
+  }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="FinKey">
+  <rect width="32" height="32" rx="7" fill="#0a0a0a"/>
+  <g transform="translate(4 4)" stroke="#E3E3E3" stroke-width="1.2" stroke-linecap="square" fill="none">
+    <line x1="13" y1="5" x2="13" y2="19"/>
+    <line x1="6" y1="5" x2="13" y2="5"/>
+    <line x1="6" y1="12" x2="13" y2="12"/>
+    <line x1="13" y1="12" x2="19" y2="5"/>
+    <line x1="13" y1="12" x2="19" y2="19"/>
+  </g>
+</svg>

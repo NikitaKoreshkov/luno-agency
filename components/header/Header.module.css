@@ -1,0 +1,337 @@
+/* ──────────────────────────────────────────────────
+   SHELL — фиксированный контейнер с навигацией.
+────────────────────────────────────────────────── */
+.shell {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 130;
+  pointer-events: none;
+}
+
+.shellOpen {
+  z-index: 220;
+}
+
+/* Ширина как у панелей: 1360px, по 32px по бокам. */
+.header {
+  position: relative;
+  top: calc(var(--glass-progress, 1) * max(28px, env(safe-area-inset-top, 0px)));
+  left: auto;
+  width: min(1360px, calc(100% - 64px));
+  margin-inline: auto;
+  z-index: 130;
+  padding: calc((1 - var(--glass-progress, 1)) * 18px) 0;
+  border-radius: calc(var(--glass-progress, 1) * 999px);
+  overflow: visible;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.glassHost {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* ──────────────────────────────────────────────────
+   BAR INNER — контент внутри капсулы
+────────────────────────────────────────────────── */
+.barInner {
+  position: relative;
+  z-index: 1;
+  min-height: 4.25rem;
+  padding: 1.05rem 60px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  border-radius: inherit;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  justify-self: start;
+}
+
+.logoTitle {
+  display: block;
+  height: 26px;
+  width: auto;
+  color: #ffffff;
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  justify-self: center;
+}
+
+.navLink {
+  position: relative;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-decoration: none;
+  padding-bottom: 4px;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.55);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navLink:hover { opacity: 0.85; }
+
+.navLink:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* Right side */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-self: end;
+}
+
+/* Profile — icon only, same plate as FinKey «Войти» */
+.profileBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--glass-btn-h);
+  height: var(--glass-btn-h);
+  padding: 0;
+  border-radius: var(--glass-radius-pill);
+  border: none;
+  background: var(--glass-on-fill);
+  color: var(--glass-fg-secondary);
+  box-shadow: var(--glass-btn-shadow);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.profileBtn:hover {
+  background: var(--glass-on-fill-hover);
+  color: var(--glass-fg);
+}
+
+.profileBtn:active {
+  background: var(--glass-on-fill-active);
+  transform: scale(0.985);
+}
+
+/* CTA — FinKey HeaderLoginButton lg quiet */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: var(--glass-btn-h);
+  min-width: var(--glass-btn-min);
+  padding: 0 var(--glass-btn-px);
+  border-radius: var(--glass-radius-pill);
+  border: none;
+  background: var(--btn-solid-bg);
+  color: var(--btn-solid-fg);
+  box-shadow: var(--btn-solid-shadow);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cta:hover {
+  background: var(--btn-solid-hover);
+}
+
+.cta:active {
+  transform: scale(0.985);
+}
+
+/* Burger */
+.menuBtn {
+  display: none;
+  width: var(--glass-btn-h);
+  height: var(--glass-btn-h);
+  border: none;
+  border-radius: var(--glass-radius-pill);
+  background: var(--glass-on-fill);
+  box-shadow: var(--glass-btn-shadow);
+  color: var(--glass-fg);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  transition:
+    background 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.menuBtn:hover {
+  background: var(--glass-on-fill-hover);
+}
+
+.menuBtn:active {
+  background: var(--glass-on-fill-active);
+  transform: scale(0.985);
+}
+
+.menuBtn span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.menuBtnOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menuBtnOpen span:nth-child(2) { opacity: 0; }
+.menuBtnOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding:
+    calc(max(28px, env(safe-area-inset-top, 0px)) + 5.5rem)
+    28px
+    calc(28px + env(safe-area-inset-bottom, 0px));
+  background: #050506;
+  color: #fff;
+  pointer-events: auto;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  animation: drawerIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawerLink {
+  display: block;
+  padding: 14px 4px;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(28px, 8vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #fff;
+  text-decoration: none;
+}
+
+.drawerFooter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.drawerFooter .cta {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+}
+
+@keyframes drawerIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawerOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.drawer.drawerClosing {
+  animation: drawerOut 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ─── Breakpoints — same as FinKey capsule ─── */
+@media (max-width: 1024px) {
+  .barInner {
+    gap: 16px;
+    padding: 1rem 40px;
+    min-height: 4rem;
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav { display: none; }
+  .menuBtn { display: flex; }
+  .barInner > .right > .profileBtn { display: none; }
+  .drawerFooter .profileBtn { display: inline-flex; }
+  .right { justify-self: end; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    width: min(1360px, calc(100% - 24px));
+    top: calc(var(--glass-progress, 1) * max(12px, env(safe-area-inset-top, 0px)));
+  }
+
+  .barInner {
+    padding: 0.7rem 16px 0.7rem 18px;
+    min-height: 3.55rem;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .barInner {
+    padding: 0.55rem 12px 0.55rem 16px;
+    min-height: 3.25rem;
+  }
+  .logoTitle { height: 20px; }
+  .cta { display: none; }
+  .drawerFooter .cta { display: inline-flex; }
+  .right { gap: 8px; }
+}

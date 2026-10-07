@@ -1,0 +1,92 @@
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 140px 32px 120px;
+}
+
+.inner {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  margin-bottom: 72px;
+}
+
+.label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: #fff;
+  margin: 0;
+}
+
+.panelWrap {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  /* Sales-desk GlassField height for this form only. */
+  --glass-control-h: 3.25rem;
+}
+
+/* Единственная колонка: форма центрируется через .panelWrap. */
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.panelPad {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 36px 36px 40px;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 88px 16px 100px;
+  }
+
+  .inner {
+    max-width: none;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .heading {
+    font-size: clamp(1.4rem, 6.4vw, 1.9rem);
+  }
+
+  .panelWrap {
+    max-width: none;
+    --glass-control-h: 2.75rem;
+  }
+
+  .panelPad {
+    padding: 24px 18px 28px;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,471 @@
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 140px 32px;
+}
+
+.inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+.header {
+  margin-bottom: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+
+/* Подъём строки из-под маски — порт Obys-Agency (`.line h1 { y: 150 }`).
+   Скрытую позу ставим только когда клиентский JS уже выставил html[data-perf-tier],
+   иначе при выключенном JS заголовок остался бы пустым. */
+.lineMask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.lineInner {
+  display: block;
+  transition: transform 0.85s var(--glass-ease, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+:global(html[data-perf-tier]) .heading[data-in="0"] .lineInner {
+  transform: translateY(115%);
+}
+
+.panelWrap {
+  position: relative;
+  z-index: 2;
+}
+
+.panelMotion {
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+/* Слой нужен только на время появления: framer-motion сам себе will-change не
+   ставит, а постоянный will-change = композитный слой панели (~1900x2600 px на
+   retina) на весь скролл. Пока он висит, каждый напечатанный символ грязнит и
+   перерисовывает тайлы этого слоя. Класс снимается по onAnimationComplete. */
+.panelMotionLive {
+  will-change: transform, opacity;
+}
+
+.panelBlurVeil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: var(--panel-radius, var(--glass-radius-panel));
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.panelVeilLive {
+  will-change: opacity;
+}
+
+.cardInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card {
+  position: relative;
+  padding: 44px 28px 48px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  cursor: default;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  transition:
+    background 0.45s ease,
+    box-shadow 0.45s ease,
+    border-color 0.45s ease;
+}
+
+.card:first-child {
+  border-radius: var(--panel-radius, var(--glass-radius-panel)) 0 0 var(--panel-radius, var(--glass-radius-panel));
+}
+
+.card:last-child {
+  border-right: none;
+  border-radius: 0 var(--panel-radius, var(--glass-radius-panel)) var(--panel-radius, var(--glass-radius-panel)) 0;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--glass-panel-rim-ink);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  transition: opacity 0.45s ease;
+}
+
+.cardActive {
+  background: var(--btn-solid-bg);
+  border-color: transparent;
+  box-shadow: var(--desk-glass-ink);
+}
+
+.cardActive::after {
+  opacity: 1;
+}
+
+.watermark {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  z-index: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.1rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.45s ease;
+}
+
+.cardActive .watermark {
+  color: rgba(var(--ink-on-solid), 0.08);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.num {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.16em;
+  flex-shrink: 0;
+  transition: color 0.45s ease;
+}
+
+.cardActive .num {
+  color: rgba(var(--ink-on-solid), 0.4);
+}
+
+.subtitle {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.45s ease;
+  min-height: 1.2em;
+}
+
+.cardActive .subtitle {
+  color: rgba(var(--ink-on-solid), 0.45);
+}
+
+.title {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.35rem, 1.8vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 32px;
+  transition: color 0.45s ease;
+}
+
+.cardActive .title {
+  color: var(--btn-solid-fg);
+}
+
+.statBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  transition: border-color 0.45s ease;
+}
+
+.cardActive .statBlock {
+  border-bottom-color: rgba(var(--ink-on-solid), 0.1);
+}
+
+.stat {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.2rem, 3.2vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.45s ease;
+}
+
+.cardActive .stat {
+  color: var(--btn-solid-fg);
+}
+
+.statLabel {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  transition: color 0.45s ease;
+  min-height: 1.2em;
+}
+
+.cardActive .statLabel {
+  color: rgba(var(--ink-on-solid), 0.5);
+}
+
+.benefit {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: auto;
+  padding-bottom: 32px;
+  transition: color 0.45s ease;
+  min-height: 1.5em;
+}
+
+.cardActive .benefit {
+  color: rgba(var(--ink-on-solid), 0.7);
+}
+
+.typeCursor {
+  display: inline-block;
+  margin-left: 1px;
+  color: rgba(255, 255, 255, 0.7);
+  animation: typeBlink 0.85s step-end infinite;
+}
+
+@keyframes typeBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.cardActive .typeCursor {
+  color: rgba(var(--ink-on-solid), 0.55);
+}
+
+.channels {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.22);
+  margin: 0;
+  transition: color 0.45s ease;
+}
+
+.cardActive .channels {
+  color: rgba(var(--ink-on-solid), 0.7);
+}
+
+.channelSep {
+  margin: 0 8px;
+  opacity: 0.6;
+}
+
+@media (max-width: 1180px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0;
+  }
+
+  .card:first-child {
+    border-radius: var(--panel-radius, var(--glass-radius-panel)) 0 0 0;
+  }
+
+  .card:nth-child(2) {
+    border-right: none;
+    border-radius: 0 var(--panel-radius, var(--glass-radius-panel)) 0 0;
+  }
+
+  .card:nth-child(3) {
+    border-bottom: none;
+    border-radius: 0 0 0 var(--panel-radius, var(--glass-radius-panel));
+  }
+
+  .card:last-child {
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0 0 var(--panel-radius, var(--glass-radius-panel)) 0;
+  }
+}
+
+@media (max-width: 1100px) {
+
+  .card:hover:not(.cardActive),
+  .card:active:not(.cardActive) {
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+  }
+
+  .card:hover:not(.cardActive)::after,
+  .card:active:not(.cardActive)::after {
+    opacity: 0;
+  }
+
+  .card:hover:not(.cardActive) .watermark,
+  .card:active:not(.cardActive) .watermark {
+    color: rgba(255, 255, 255, 0.07);
+  }
+
+  .card:hover:not(.cardActive) .num,
+  .card:active:not(.cardActive) .num {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .card:hover:not(.cardActive) .subtitle,
+  .card:active:not(.cardActive) .subtitle {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .card:hover:not(.cardActive) .title,
+  .card:active:not(.cardActive) .title {
+    color: #fff;
+  }
+
+  .card:hover:not(.cardActive) .statBlock,
+  .card:active:not(.cardActive) .statBlock {
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+  }
+
+  .card:hover:not(.cardActive) .stat,
+  .card:active:not(.cardActive) .stat {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .card:hover:not(.cardActive) .statLabel,
+  .card:active:not(.cardActive) .statLabel {
+    color: rgba(255, 255, 255, 0.28);
+  }
+
+  .card:hover:not(.cardActive) .benefit,
+  .card:active:not(.cardActive) .benefit {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .card:hover:not(.cardActive) .channels,
+  .card:active:not(.cardActive) .channels {
+    color: rgba(255, 255, 255, 0.22);
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 88px 16px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .heading {
+    font-size: clamp(1.4rem, 6.4vw, 1.9rem);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 32px 22px 36px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0;
+  }
+
+  .card:first-child {
+    border-radius: var(--panel-radius, var(--glass-radius-panel)) var(--panel-radius, var(--glass-radius-panel)) 0 0;
+  }
+
+  .card:nth-child(2),
+  .card:nth-child(3) {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0;
+  }
+
+  .card:last-child {
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0 0 var(--panel-radius, var(--glass-radius-panel)) var(--panel-radius, var(--glass-radius-panel));
+  }
+
+  .stat {
+    font-size: clamp(2.1rem, 10vw, 2.8rem);
+  }
+
+  .title {
+    margin-bottom: 22px;
+  }
+}

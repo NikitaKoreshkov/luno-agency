@@ -1,0 +1,888 @@
+.section {
+  position: relative;
+  padding: 140px 32px;
+}
+
+.inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+.panelWrap {
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  margin-bottom: 72px;
+}
+
+.label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── Layout ───────────────────────────────── */
+.layout {
+  --niche-panel-h: 700px;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  align-items: stretch;
+  gap: 0;
+  height: var(--niche-panel-h);
+  min-height: var(--niche-panel-h);
+  max-height: var(--niche-panel-h);
+}
+
+/* ── Tabs ─────────────────────────────────── */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  min-height: 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 28px 16px;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.tab {
+  --tab-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tab-dur: 0.42s;
+  --tab-accent-dur: 0.72s;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 18px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: none;
+  transition:
+    color var(--tab-accent-dur) var(--tab-ease),
+    border-color var(--tab-accent-dur) var(--tab-ease),
+    box-shadow var(--tab-accent-dur) var(--tab-ease);
+  width: 100%;
+  overflow: hidden;
+}
+
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--btn-solid-bg);
+  opacity: 0;
+  transition: opacity var(--tab-accent-dur) var(--tab-ease);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tab:hover:not(.tabActive),
+.tab:focus-visible:not(.tabActive) {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tabActive,
+.tabActive:hover,
+.tabActive:focus-visible {
+  color: var(--btn-solid-fg);
+  border-color: transparent;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset;
+}
+
+.tabActive::before,
+.tabActive:hover::before,
+.tabActive:focus-visible::before {
+  opacity: 1;
+}
+
+.tabInner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.tabIconWrap {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(0);
+  transition: transform var(--tab-dur) var(--tab-ease);
+}
+
+.tabIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.85;
+  transition:
+    opacity var(--tab-accent-dur) var(--tab-ease),
+    color var(--tab-accent-dur) var(--tab-ease);
+}
+
+.tabLabel {
+  display: block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: translateX(-18px);
+  transition:
+    max-width var(--tab-dur) var(--tab-ease),
+    opacity calc(var(--tab-dur) * 0.65) ease,
+    transform var(--tab-dur) var(--tab-ease);
+}
+
+.tab:hover .tabIconWrap,
+.tab:focus-visible .tabIconWrap {
+  transform: translateX(-14px);
+}
+
+.tab:hover .tabLabel,
+.tab:focus-visible .tabLabel {
+  max-width: 19rem;
+  opacity: 1;
+  transform: translateX(0);
+  padding-left: 12px;
+  transition:
+    max-width var(--tab-dur) var(--tab-ease),
+    opacity calc(var(--tab-dur) * 0.55) ease 0.06s,
+    transform var(--tab-dur) var(--tab-ease) 0.04s;
+}
+
+.tabActive .tabIconWrap {
+  transform: translateX(-14px);
+  transition: transform var(--tab-accent-dur) var(--tab-ease);
+}
+
+.tabActive .tabLabel {
+  max-width: 19rem;
+  opacity: 1;
+  transform: translateX(0);
+  padding-left: 12px;
+  transition:
+    max-width var(--tab-accent-dur) var(--tab-ease),
+    opacity var(--tab-accent-dur) var(--tab-ease) 0.1s,
+    transform var(--tab-accent-dur) var(--tab-ease) 0.08s,
+    padding-left var(--tab-accent-dur) var(--tab-ease);
+}
+
+.tabActive .tabIcon {
+  opacity: 1;
+  color: var(--btn-solid-fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab::before {
+    transition: none;
+  }
+
+  .tabIconWrap,
+  .tabLabel {
+    transition: none;
+  }
+
+  .tab:hover .tabIconWrap,
+  .tab:focus-visible .tabIconWrap {
+    transform: none;
+  }
+
+  .tab:hover .tabLabel,
+  .tab:focus-visible .tabLabel {
+    max-width: 19rem;
+    opacity: 1;
+    transform: none;
+    padding-left: 12px;
+  }
+}
+
+/* ── Gallery panel ────────────────────────── */
+.panel {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0 24px 24px 0;
+}
+
+.panelStage {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.openedLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.opened {
+  position: absolute;
+  overflow: hidden;
+  background: #0c0c0e;
+  box-shadow: var(--glass-panel-chrome);
+  will-change: left, top, width, height, border-radius;
+  pointer-events: auto;
+}
+
+.opened::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--glass-panel-rim);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.openedStage {
+  position: absolute;
+  pointer-events: none;
+}
+
+.openedLogoWrap {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+.openedDome {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.openedDome :global(.dg-stage) {
+  perspective: calc(var(--radius) * 0.58);
+}
+
+.openedDome :global(.dg-item__image) {
+  inset: 16px;
+}
+
+.openedDome :global(.dg-overlay) {
+  background-image: radial-gradient(
+    rgba(235, 235, 235, 0) 86%,
+    var(--overlay-blur-color, #08080a) 100%
+  );
+}
+
+.openedBack {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(12, 12, 14, 0.72);
+  color: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.openedBack:hover,
+.openedBack:focus-visible {
+  background: rgba(20, 20, 24, 0.88);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.openedBack:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.companies {
+  display: grid;
+  gap: 18px;
+  height: 100%;
+  min-height: 0;
+  padding: 28px;
+  align-content: stretch;
+  grid-auto-rows: minmax(0, 1fr);
+  overflow: auto;
+}
+
+.companies[data-count="1"] {
+  grid-template-columns: minmax(0, 420px);
+  justify-content: center;
+}
+
+.companies[data-count="2"],
+.companies[data-count="4"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.companies[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.companies[data-count="5"],
+.companies[data-count="6"],
+.companies[data-count="7"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.companies[data-count="8"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.companies[data-count="7"] .companyCard:last-child {
+  grid-column: 2;
+}
+
+/* Нише с запасом больше 8 карточек — плотная сетка 4×N: иначе ряды не
+   влезают в фиксированные 700px панели и сетка уходит в скролл. */
+.companies[data-dense] {
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.companies[data-dense] .companyCard {
+  gap: 8px;
+}
+
+.companies[data-dense] .companyVisual {
+  min-height: 0;
+}
+
+.companies[data-dense] .companyName {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.companyCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  border-radius: 18px;
+  animation: companyCardIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--card-i, 0) * 26ms);
+}
+
+/* Каскад проигрывается и при первой отрисовке, и при смене ниши:
+   panelStage перемонтируется по key, так что отдельной анимации не нужно. */
+@keyframes companyCardIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companyCard {
+    animation: none;
+  }
+}
+
+.companyCard:focus-visible .companyVisual {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+.companyVisualHidden {
+  visibility: hidden;
+}
+
+.companyVisual {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex: 1;
+  min-height: 140px;
+  overflow: hidden;
+  border: none;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: var(--glass-panel-chrome);
+  transition: background 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.companyVisual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--glass-panel-rim);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.companyVisualLogo {
+  align-items: center;
+  background: #0c0c0e;
+}
+
+.companyVisualLogoLight {
+  background: #f3f4f7;
+  box-shadow: var(--desk-glass-ink), var(--glass-shadow-raised);
+}
+
+.companyVisualLogoLight::after {
+  background: var(--glass-panel-rim-ink);
+}
+
+.companyLogo,
+.companyImage,
+.companyLogoTransformFrame,
+.companyPlaceholder {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Наведение — только инкремент к уже заданному масштабу логотипа,
+   иначе transform перетёр бы --logo-scale у «высоких» лого. */
+.companyCard:hover,
+.companyCard:focus-visible {
+  --logo-hover: 1.06;
+}
+
+.companyCard:hover .companyVisual,
+.companyCard:focus-visible .companyVisual {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.companyCard:hover .companyVisualLogo,
+.companyCard:focus-visible .companyVisualLogo {
+  background: #101013;
+}
+
+.companyImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(var(--logo-hover, 1));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.companyLogo {
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  filter: brightness(var(--logo-bright, 1))
+    drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 6px 16px rgba(0, 0, 0, 0.72));
+}
+
+.companyLogoFlex {
+  flex: 0 0 auto;
+  width: calc(84% * var(--logo-scale, 1));
+  height: calc(84% * var(--logo-scale, 1));
+  max-width: 100%;
+  max-height: 100%;
+  transform: scale(var(--logo-hover, 1));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.companyLogoFlexGrow {
+  max-width: none;
+  max-height: none;
+}
+
+.companyLogoTransformFrame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8%;
+  box-sizing: border-box;
+}
+
+.companyLogoTransformMedia {
+  flex: 0 1 auto;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  transform: scale(calc(var(--logo-scale, 1) * var(--logo-hover, 1)));
+  transform-origin: center;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.companyPlaceholder {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: center;
+}
+
+.companyName {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 4px 2px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  color: rgba(255, 255, 255, 0.88);
+  text-align: center;
+}
+
+.mobileTriggerIcon {
+  display: flex;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+/* ── Mobile picker ────────────────────────── */
+.mobilePicker {
+  position: relative;
+  z-index: 20;
+  display: none;
+}
+
+.mobilePickerSheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 8;
+  padding: 8px;
+  border-radius: 16px;
+  background: #0c0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, -8px, 0);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0.18s;
+}
+
+.mobilePickerSheetOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+}
+
+.mobileTrigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  height: auto;
+  padding: 10px 16px 10px 18px;
+  border: none;
+  border-radius: 16px;
+  background: var(--btn-solid-bg);
+  color: var(--btn-solid-fg);
+  box-shadow: var(--btn-solid-shadow);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.mobileTriggerLabel {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.mobileChevron {
+  display: flex;
+  color: inherit;
+  opacity: 0.7;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobileTriggerOpen .mobileChevron {
+  transform: rotate(180deg);
+}
+
+.mobilePickerList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px;
+}
+
+.mobileOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobileOptionIcon {
+  display: flex;
+  flex-shrink: 0;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.mobileOption:hover,
+.mobileOption:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.mobileOptionActive {
+  background: var(--btn-solid-bg);
+  color: var(--btn-solid-fg);
+  border-color: transparent;
+  box-shadow: var(--btn-solid-shadow);
+}
+
+.mobileOptionActive .mobileOptionIcon {
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    --niche-panel-h: min(72svh, 640px);
+    grid-template-columns: 1fr;
+    height: var(--niche-panel-h);
+    min-height: var(--niche-panel-h);
+    max-height: var(--niche-panel-h);
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .mobilePicker {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .panel {
+    border-radius: 24px;
+  }
+
+  .companies {
+    padding: 16px 16px 20px;
+    row-gap: 18px;
+    column-gap: 12px;
+  }
+
+  .companyCard {
+    gap: 14px;
+  }
+
+  /* Two logos: hug the row instead of leaving an empty lower half. */
+  .layout:has(.companies[data-count="2"]) {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .companies[data-count="2"] {
+    height: auto;
+    align-content: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .companies[data-count="2"] .companyVisual {
+    flex: 0 0 auto;
+    min-height: 0;
+    aspect-ratio: 1;
+  }
+
+  /* Плотная ниша на планшете/телефоне растёт по высоте, а не скроллится
+     внутри панели — 13 карточек в 72svh не помещаются. */
+  .layout:has(.companies[data-dense]) {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .companies[data-dense] {
+    height: auto;
+    align-content: start;
+    grid-auto-rows: minmax(0, auto);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .companies[data-dense] .companyVisual {
+    flex: 0 0 auto;
+    aspect-ratio: 1;
+  }
+
+  .companies[data-count="3"],
+  .companies[data-count="5"],
+  .companies[data-count="6"],
+  .companies[data-count="7"],
+  .companies[data-count="8"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .companies[data-count="8"] {
+    row-gap: 20px;
+    padding-bottom: 22px;
+  }
+
+  .companies[data-count="3"] .companyCard:last-child,
+  .companies[data-count="5"] .companyCard:last-child,
+  .companies[data-count="7"] .companyCard:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .layout {
+    --niche-panel-h: min(68svh, 580px);
+  }
+
+  .layout:has(.companies[data-count="8"]) {
+    --niche-panel-h: min(74svh, 640px);
+  }
+
+  .section {
+    padding: 88px 16px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .heading {
+    font-size: clamp(1.4rem, 6.4vw, 1.9rem);
+  }
+
+  .companies {
+    padding: 14px 14px 20px;
+    row-gap: 16px;
+    column-gap: 10px;
+  }
+
+  .companies[data-count="8"] {
+    row-gap: 18px;
+    padding-bottom: 22px;
+  }
+
+  .companyCard {
+    gap: 12px;
+  }
+
+  .companyVisual {
+    min-height: 96px;
+  }
+
+  .companyName {
+    padding: 0 2px 4px;
+    font-size: 13px;
+  }
+}
