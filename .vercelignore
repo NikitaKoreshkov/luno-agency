@@ -1,0 +1,10 @@
+# Not needed for the marketing site deploy
+vendor
+.git
+.perf-tmp
+*.pack
+*.idx
+.env*
+node_modules
+.next
+public/niches/**/*.jpg

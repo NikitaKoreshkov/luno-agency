@@ -1,0 +1,295 @@
+@import "tailwindcss";
+
+/* ── Brand tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --color-bg: #000000;
+  --color-fg: #ffffff;
+  --color-muted: rgba(255, 255, 255, 0.56);
+  --color-faint: rgba(255, 255, 255, 0.12);
+  --color-border: rgba(255, 255, 255, 0.14);
+  --color-accent: #ffffff;
+  --color-success: #7eb89a;
+  --color-error: #c97878;
+  --perf-glass-blur: 14px;
+
+  /* FinKey «Войти»: quiet glass capsule on the header. */
+  --glass-fg: rgba(255, 255, 255, 0.92);
+  --glass-fg-secondary: rgba(255, 255, 255, 0.62);
+  --glass-fg-muted: rgba(255, 255, 255, 0.4);
+  --glass-on-fill: rgba(255, 255, 255, 0.06);
+  --glass-on-fill-hover: rgba(255, 255, 255, 0.1);
+  --glass-on-fill-active: rgba(255, 255, 255, 0.14);
+  --glass-radius-pill: 999px;
+  --glass-radius-menu: 18px;
+  --glass-control-h: 3rem;
+  --glass-inset-hi: 0.34;
+  --glass-inset-lo: 0.7;
+  --glass-sheen: 0.14;
+  --glass-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --glass-dur-morph: 0.34s;
+  --glass-btn-h: 3rem;
+  --glass-btn-px: 1.75rem;
+  --glass-btn-min: 7.75rem;
+  --glass-btn-shadow:
+    inset 0 0.6px 0.6px rgba(255, 255, 255, 0.38),
+    inset 0 -0.5px 0.8px rgba(0, 0, 0, 0.22),
+    inset 0 0 10px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0.5px rgb(255 255 255 / 0.28),
+    inset 0 -1px 1px rgb(0 0 0 / 0.21),
+    inset 0 0 10px rgb(255 255 255 / 0.14);
+
+  /* FinKey trader / HandoffGlassShell raised plate */
+  --glass-fill-raised: rgba(8, 8, 10, 0.52);
+  --glass-blur-raised: 18px;
+  --glass-rim: rgba(255, 255, 255, 0.18);
+  --glass-radius-panel: 18px;
+  --glass-shadow-raised:
+    0 2px 6px rgba(0, 0, 0, 0.34),
+    0 18px 44px -14px rgba(0, 0, 0, 0.62);
+  --desk-glass:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.34),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.066),
+    inset 0 0 10px rgba(255, 255, 255, 0.14),
+    inset 0 0.6px 0.6px rgba(255, 255, 255, 0.38),
+    inset 0 -0.5px 0.8px rgba(0, 0, 0, 0.22),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
+  --glass-panel-chrome: var(--desk-glass), var(--glass-shadow-raised);
+  --glass-panel-rim: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.85) 45%,
+    rgba(255, 255, 255, 0.765) 55%,
+    rgba(255, 255, 255, 0.042) 100%
+  );
+  /* Same rim recipe on ice/light plates */
+  --glass-panel-rim-ink: linear-gradient(
+    135deg,
+    rgba(12, 23, 32, 0.06) 0%,
+    rgba(12, 23, 32, 0.72) 45%,
+    rgba(12, 23, 32, 0.58) 55%,
+    rgba(12, 23, 32, 0.04) 100%
+  );
+  --desk-glass-ink:
+    inset 0 1px 0.5px rgba(12, 23, 32, 0.22),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 0 10px rgba(12, 23, 32, 0.1),
+    inset 0 0.6px 0.6px rgba(12, 23, 32, 0.28),
+    inset 0 -0.5px 0.8px rgba(255, 255, 255, 0.42),
+    inset 0 0 10px rgba(12, 23, 32, 0.05);
+
+  --btn-bg: var(--glass-on-fill);
+  --btn-fg: var(--glass-fg);
+  --btn-hover-bg: var(--glass-on-fill-hover);
+  /* LUNO ice: particle-white with a cool blue bloom. */
+  --btn-solid-bg: linear-gradient(165deg, #f5f9fc 0%, #d7e7f2 100%);
+  --btn-solid-hover: linear-gradient(165deg, #fbfdfe 0%, #e4f0f7 100%);
+  --btn-solid-fg: #0c1720;
+  --ink-on-solid: 12, 23, 32;
+  --btn-solid-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -1px 1px rgba(90, 130, 155, 0.14),
+    0 0 28px rgba(170, 205, 228, 0.22);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --glass-btn-h: 2.75rem;
+    --glass-control-h: 2.75rem;
+    --glass-btn-px: 1.35rem;
+    --glass-btn-min: 0;
+  }
+}
+
+.glass-btn,
+.glass-btn-icon {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border: none;
+  border-radius: var(--glass-radius-pill);
+  background: var(--glass-on-fill);
+  color: var(--glass-fg);
+  box-shadow: var(--glass-btn-shadow);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-btn {
+  height: var(--glass-btn-h);
+  min-width: var(--glass-btn-min);
+  padding: 0 var(--glass-btn-px);
+}
+
+.glass-btn-icon {
+  width: var(--glass-btn-h);
+  height: var(--glass-btn-h);
+  min-width: var(--glass-btn-h);
+  padding: 0;
+  color: var(--glass-fg-secondary);
+}
+
+.glass-btn-block {
+  width: 100%;
+  min-width: 0;
+}
+
+.glass-btn:hover:not(:disabled),
+.glass-btn-icon:hover:not(:disabled) {
+  background: var(--glass-on-fill-hover);
+  color: var(--glass-fg);
+}
+
+.glass-btn:active:not(:disabled),
+.glass-btn-icon:active:not(:disabled) {
+  background: var(--glass-on-fill-active);
+  transform: scale(0.985);
+}
+
+.glass-btn:disabled,
+.glass-btn-icon:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Raised glass plate — first FINKEY panel in the trader film. */
+.luno-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--glass-radius-panel);
+  background: var(--glass-fill-raised);
+  backdrop-filter: blur(var(--glass-blur-raised)) saturate(124%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-raised)) saturate(124%);
+  box-shadow: var(--glass-panel-chrome);
+}
+
+.luno-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--glass-panel-rim);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  max-width: 100%;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────────── */
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: var(--color-fg);
+  background: var(--color-bg);
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  max-width: 100%;
+}
+
+/* ── Lenis ──────────────────────────────────────────────────────────────────── */
+/* Lenis manages window/document scroll — it must own the root height. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+/* ── Background container ───────────────────────────────────────────────────── */
+#background-container {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+}
+
+/* ── Page content ──────────────────────────────────────────────────────────── */
+#page-content {
+  position: relative;
+  overflow-x: clip;
+  max-width: 100%;
+  /* Без z-index — иначе весь контент окажется ПОД glass portal (129) */
+}
+
+#site-header.header-scrolled {
+  background: transparent;
+}
+
+/* ── Contact modal: blur через filter (backdrop-filter здесь ненадёжен) ── */
+#background-container,
+#page-content > main,
+#page-content > main ~ *,
+[data-site-header-shell] {
+  transition: filter 0.12s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-contact-modal-open] [data-site-header-shell] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html[data-contact-modal-open] #background-container,
+html[data-contact-modal-open] #page-content > main,
+html[data-contact-modal-open] #page-content > main ~ * {
+  filter: blur(28px) brightness(0.55);
+  pointer-events: none;
+  user-select: none;
+}
+
+html[data-contact-modal-open],
+html[data-contact-modal-open] body,
+html[data-nav-open],
+html[data-nav-open] body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html[data-contact-modal-open] #page-content,
+html[data-nav-open] #page-content {
+  touch-action: none;
+}
