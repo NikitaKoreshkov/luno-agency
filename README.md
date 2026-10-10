@@ -1,6 +1,40 @@
-# LUNO: marketing site and client area for a digital agency
+<div align="center">
 
-**Live demo:** https://luno-agency-nknpro.vercel.app
+# LUNO
+
+**A digital-agency site that sells motion by being motion.**
+A scroll-driven WebGPU headline, a refracting liquid-glass header and a 3D dome of
+client niches — all held inside a frame budget on weak devices — plus a real client
+area: e-mail OTP, Google sign-in, orders and support tickets on Postgres.
+
+**Live demo:** [luno-agency-nknpro.vercel.app](https://luno-agency-nknpro.vercel.app)
+
+![Next.js](https://img.shields.io/badge/next.js-16%20App%20Router-black?logo=next.js&logoColor=white)
+![Three.js](https://img.shields.io/badge/WebGPU-three.js%20%2B%20TSL-f1b200)
+![GSAP](https://img.shields.io/badge/scroll-Lenis%20%2B%20GSAP-8cc4c3)
+![Auth](https://img.shields.io/badge/auth-OTP%20%2B%20Google%20%2B%20JWT-blueviolet)
+![PostgreSQL](https://img.shields.io/badge/postgreSQL-no%20ORM-336791?logo=postgresql&logoColor=white)
+![LOC](https://img.shields.io/badge/TypeScript-23.4k%20lines-blue)
+![License](https://img.shields.io/badge/license-all%20rights%20reserved-red)
+
+</div>
+
+## The problem
+
+An agency's own site is the hardest pitch it makes: the page that says "we build
+great products" is judged before a word is read. A bought template with a bought
+fade does not survive that judgment.
+
+But heavy motion has a cost that an agency pays twice — real visitors arrive on
+mid-range phones, and a stutter reads as an unfinished product, not as skill. So
+the build had one rule from the start: the first screen is a real-time WebGPU scene,
+and it still has to hold its frame budget where a shader has no business running.
+
+The second problem is the boring one. Enquiries from an agency site go cold in a
+mailbox, so this is not a landing page — it is a cabinet: registration, company
+profile, orders and threaded support tickets, with sessions the site owns.
+
+---
 
 LUNO is a full-cycle digital agency in Almaty: film production, SMM, targeting, design, websites and apps. Their site has to sell that work, so it leads with motion instead of a stock template: a scroll-driven WebGPU headline, a refracting liquid-glass header, a 3D dome of client niches. All of it runs inside a frame budget on weak devices.
 
@@ -9,6 +43,8 @@ LUNO is a full-cycle digital agency in Almaty: film production, SMM, targeting, 
 </p>
 
 The second half is a real product surface, not a mockup: email OTP registration, Google sign-in, password reset and a client dashboard with orders and support tickets, all backed by Postgres.
+
+---
 
 ## The page, section by section
 
